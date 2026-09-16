@@ -1,0 +1,55 @@
+esphome:
+  name: esp32-display
+  friendly_name: ESP32 Display
+
+esp32s3:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+wifi:
+  ssid: "YOUR_SSID"
+  password: "YOUR_PASSWORD"
+
+api:
+logger:
+
+spi:
+  clk_pin: GPIO12
+  mosi_pin: GPIO11
+
+custom_components:
+  - source:
+      type: local
+      path: custom_components
+
+display:
+  - platform: ssd1283a
+    cs_pin: GPIO10
+    dc_pin: GPIO9
+    reset_pin: GPIO8
+    width: 130
+    height: 130
+    data_rate: 2MHz
+    update_interval: 5s
+    lambda: |-
+      it.fill(Color(0, 0, 0));
+      it.print(65, 60, id(my_font), TextAlign::CENTER, "Hello!");
+      it.print(65, 80, id(my_font_small), TextAlign::CENTER, "SSD1283A");
+
+font:
+  - file: "gfonts://Roboto"
+    id: my_font
+    size: 14
+  - file: "gfonts://Roboto"
+    id: my_font_small
+    size: 10
+
+# Подсветка (опционально)
+output:
+  - platform: ledc
+    pin: GPIO7
+    id: backlight
+    frequency: 1000Hz
+    min_power: 0.0
+    max_power: 1.0
